@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List, Optional
+import unicodedata
 import joblib
 import pandas as pd
 import numpy as np
@@ -26,10 +27,17 @@ TIPOS_PRODUCTOS = {
     'Papel Higienico': ['PAPEL HIGIENICO']
 }
 
+def normalizar(texto: str) -> str:
+    texto = str(texto).upper()
+    return ''.join(
+        c for c in unicodedata.normalize('NFD', texto)
+        if unicodedata.category(c) != 'Mn'
+    )
+
 def clasificar_rubro(descripcion: str) -> Optional[str]:
-    desc = str(descripcion).upper()
+    desc = normalizar(descripcion)
     for rubro, palabras in TIPOS_PRODUCTOS.items():
-        if any(p in desc for p in palabras):
+        if any(normalizar(p) in desc for p in palabras):
             return rubro
     return None
 
