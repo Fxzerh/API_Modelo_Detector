@@ -75,11 +75,11 @@ def _fila_validado(r: dict) -> str:
     score = r["score_competitividad"]
     n = max(1, min(5, int(score / 20 + 0.5)))
     if score >= 70:
-        semaforo = "🟢 Muy competitivo"
+        semaforo = "🟢"
     elif score >= 50:
-        semaforo = "🟡 En línea"
+        semaforo = "🟡"
     else:
-        semaforo = "🔴 Poco competitivo"
+        semaforo = "🔴"
     promo_style = " color: #15803d; font-weight: bold;" if r["precio_promo_ref"] < r["precio_lista_ref"] else ""
     return f"""<tr style="border-bottom: 1px solid #e2e8f0;">
   <td style="padding: 10px;"><strong>{html.escape(r['supermercado'])}</strong></td>
