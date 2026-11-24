@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List, Optional
 import unicodedata
+from pathlib import Path
 import csv
 import io
 import html
@@ -12,8 +13,14 @@ import numpy as np
 app = FastAPI(title="API Inteligencia Competitiva - 10 Rubros Testigo")
 
 # 1. Cargamos el modelo y la tabla de precios medios de referencia al iniciar
-modelo_detector = joblib.load("detector_anomalias_v2.joblib")
-df_ref = pd.read_csv("canasta_representativa_10_rubros_v2.csv")
+BASE_DIR = Path(__file__).resolve().parent  # carpeta de este archivo (api_render/)
+
+def cargar_modelo():
+    """Carga el modelo ya entrenado desde su archivo, sin depender del directorio de trabajo."""
+    return joblib.load(BASE_DIR / "detector_anomalias_v2.joblib")
+
+modelo_detector = cargar_modelo()
+df_ref = pd.read_csv(BASE_DIR / "canasta_representativa_10_rubros_v2.csv")
 mapa_referencia = dict(zip(df_ref['tipo_producto'], df_ref['precio_mercado_medio']))
 
 # Palabras clave exactas usadas en Colab para clasificar los 10 rubros
